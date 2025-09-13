@@ -7,10 +7,10 @@ OFILES=${CPPFILES:.cpp=.o}
 all: $(NAME)
 
 $(NAME): $(OFILES)
-	$(CXX) $(CXXFLAGS) $(O_FILES) -o  $(NAME)
+	$(CXX) $(CXXFLAGS) $(OFILES) -o  $(NAME)
 
 clean:
-	rm -f $(O_FILES)
+	rm -f $(OFILES)
 fclean:clean
 	rm -f $(NAME)
 re:fclean all
