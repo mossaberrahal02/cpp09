@@ -18,6 +18,12 @@ bool RPN::isOperator(const std::string& token) const {
 }
 
 bool RPN::isValidNumber(const std::string& token) const {
+    if (token[0] == '-')
+    {
+        if (token.length() != 2) return false;
+        if (!std::isdigit(token[1])) return false;
+        return true;
+    }
     if (token.empty()) return false;
     if (token.length() != 1) return false;
     if (!std::isdigit(token[0])) return false;
@@ -38,7 +44,7 @@ int RPN::performOperation(const std::string& op, int b, int a) const {
     }
     throw std::runtime_error("Invalid operator");
 }
-
+#include <stdio.h>
 int RPN::evaluate(const std::string& expression) {
     while (!Stack.empty())
         Stack.pop();
@@ -52,6 +58,7 @@ int RPN::evaluate(const std::string& expression) {
         
         if (isValidNumber(token)) {
             int num = std::atoi(token.c_str());
+            printf("{{%d}}\n", num);
             Stack.push(num);
         }
         else if (isOperator(token))
