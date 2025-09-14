@@ -44,7 +44,6 @@ int RPN::performOperation(const std::string& op, int b, int a) const {
     }
     throw std::runtime_error("Invalid operator");
 }
-#include <stdio.h>
 int RPN::evaluate(const std::string& expression) {
     while (!Stack.empty())
         Stack.pop();
@@ -58,7 +57,6 @@ int RPN::evaluate(const std::string& expression) {
         
         if (isValidNumber(token)) {
             int num = std::atoi(token.c_str());
-            printf("{{%d}}\n", num);
             Stack.push(num);
         }
         else if (isOperator(token))
