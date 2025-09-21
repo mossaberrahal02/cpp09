@@ -37,7 +37,18 @@ bool BitcoinExchange::loadDatabase(const std::string& filename)
 
     std::string line;
 
-    if (!std::getline(file, line) || trim(line) != "date,exchange_rate")
+    if (!std::getline(file, line)) 
+        { std::cerr << "Error: invalid database format." << std::endl; file.close(); return false; }
+    
+    // Parse header line with same flexibility as data lines
+    size_t commaPos = line.find(',');
+    if (commaPos == std::string::npos) 
+        { std::cerr << "Error: invalid database format." << std::endl; file.close(); return false; }
+    
+    std::string headerDate = trim(line.substr(0, commaPos));
+    std::string headerRate = trim(line.substr(commaPos + 1));
+    
+    if (headerDate != "date" || headerRate != "exchange_rate")
         { std::cerr << "Error: invalid database format." << std::endl; file.close(); return false; }
 
     int lineNumber = 1;
@@ -92,7 +103,18 @@ void BitcoinExchange::processInputFile(const std::string& filename) const
     std::ifstream file(filename.c_str());
     if (!file.is_open()) { std::cerr << "Error: could not open file." << std::endl; return; }
     std::string line;
-    if (!std::getline(file, line) || trim(line) != "date | value")
+    if (!std::getline(file, line)) 
+        { std::cerr << "Error: invalid input file format." << std::endl; file.close(); return; }
+    
+    // Parse header line with same flexibility as data lines
+    size_t pipePos = line.find('|');
+    if (pipePos == std::string::npos) 
+        { std::cerr << "Error: invalid input file format." << std::endl; file.close(); return; }
+    
+    std::string headerDate = trim(line.substr(0, pipePos));
+    std::string headerValue = trim(line.substr(pipePos + 1));
+    
+    if (headerDate != "date" || headerValue != "value")
         { std::cerr << "Error: invalid input file format." << std::endl; file.close(); return; }
     while (std::getline(file, line))
     {
