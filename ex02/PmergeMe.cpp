@@ -135,16 +135,12 @@ void PmergeMe::fordJohnsonSort(std::vector<int>& arr) {
     }
     fordJohnsonSort(largerElements);
     std::vector<int> mainChain = largerElements;
-    std::cout << std::endl;
 
     /* insert smaller elements using Jacobsthal sequence */
     std::vector<int> pendingElements;
     for (size_t i = 0; i < pairs.size(); ++i) {
         pendingElements.push_back(pairs[i].first);
     }
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
     
     if (!pendingElements.empty()) {
         binaryInsert(mainChain, pendingElements[0], mainChain.size());
