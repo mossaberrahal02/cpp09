@@ -66,7 +66,6 @@ void PmergeMe::printSequence(const std::vector<int>& seq, const std::string& pre
     std::cout << std::endl;
 }
 
-// Generate Jacobsthal numbers
 std::vector<size_t> PmergeMe::generateJacobsthalNumbers(size_t n) {
     std::vector<size_t> jacobsthal;
     if (n <= 1) return jacobsthal;
@@ -88,45 +87,21 @@ std::vector<size_t> PmergeMe::generateJacobsthalNumbers(size_t n) {
     return jacobsthal;
 }
 
-// Binary insertion for vector
 void PmergeMe::binaryInsert(std::vector<int>& arr, int value, size_t end) {
-    size_t left = 0;
-    size_t right = std::min(end, arr.size());
-    
-    while (left < right) {
-        size_t mid = left + (right - left) / 2;
-        if (arr[mid] < value) {
-            left = mid + 1;
-        } else {
-            right = mid;
-        }
-    }
-    
-    arr.insert(arr.begin() + left, value);
+    size_t searchEnd = std::min(end, arr.size());
+    std::vector<int>::iterator pos = std::lower_bound(arr.begin(), arr.begin() + searchEnd, value);
+    arr.insert(pos, value);
 }
 
-// Binary insertion for deque
 void PmergeMe::binaryInsert(std::deque<int>& arr, int value, size_t end) {
-    size_t left = 0;
-    size_t right = std::min(end, arr.size());
-    
-    while (left < right) {
-        size_t mid = left + (right - left) / 2;
-        if (arr[mid] < value) {
-            left = mid + 1;
-        } else {
-            right = mid;
-        }
-    }
-    
-    arr.insert(arr.begin() + left, value);
+    size_t searchEnd = std::min(end, arr.size());
+    std::deque<int>::iterator pos = std::lower_bound(arr.begin(), arr.begin() + searchEnd, value);
+    arr.insert(pos, value);
 }
 
-// Ford-Johnson sort for vector
 void PmergeMe::fordJohnsonSort(std::vector<int>& arr) {
     if (arr.size() <= 1) return;
     
-    // Step 1: Group into pairs and separate
     std::vector<std::pair<int, int> > pairs;
     bool hasStraggler = false;
     int straggler = 0;
@@ -153,38 +128,25 @@ void PmergeMe::fordJohnsonSort(std::vector<int>& arr) {
         return;
     }
 
-    // Step 2: Extract larger elements and sort them recursively
     std::vector<int> largerElements;
-    for (size_t i = 0; i < pairs.size(); ++i) {
+    for (size_t i = 0; i < pairs.size(); ++i) 
+    {
         largerElements.push_back(pairs[i].second);
     }
-    
     fordJohnsonSort(largerElements);
-    
-    // Step 3: Create main chain starting with larger elements
     std::vector<int> mainChain = largerElements;
-
-    std::cout << "mainchain >> ";
-    for (size_t i = 0; i < mainChain.size(); ++i) {
-        std::cout << mainChain[i] << " ";
-    }
     std::cout << std::endl;
 
-    // Step 4: Insert smaller elements using Jacobsthal sequence
+    /* insert smaller elements using Jacobsthal sequence */
     std::vector<int> pendingElements;
     for (size_t i = 0; i < pairs.size(); ++i) {
         pendingElements.push_back(pairs[i].first);
-    }
-    std::cout << "pending element >> ";
-    for (size_t i = 0; i < pendingElements.size(); ++i) {
-        std::cout << pendingElements[i] << " ";
     }
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << std::endl;
     
     if (!pendingElements.empty()) {
-        // Insert first element at the beginning
         binaryInsert(mainChain, pendingElements[0], mainChain.size());
 
         if (pendingElements.size() > 1) {
@@ -200,7 +162,7 @@ void PmergeMe::fordJohnsonSort(std::vector<int>& arr) {
                 for (size_t j = end; j >= start && j >= 1; --j) {
                     size_t idx = j - 1;
                     if (idx < pendingElements.size() && !inserted[idx]) {
-                        // Find position limit (corresponding larger element)
+                        /* find position of the corresponding larger element */
                         size_t limit = mainChain.size();
                         for (size_t k = 0; k < mainChain.size(); ++k) {
                             if (mainChain[k] == pairs[idx].second) {
@@ -214,7 +176,6 @@ void PmergeMe::fordJohnsonSort(std::vector<int>& arr) {
                 }
             }
             
-            // Insert any remaining elements
             for (size_t i = 1; i < pendingElements.size(); ++i) {
                 if (!inserted[i]) {
                     size_t limit = mainChain.size();
@@ -229,20 +190,14 @@ void PmergeMe::fordJohnsonSort(std::vector<int>& arr) {
             }
         }
     }
-    
-    // Step 5: Insert straggler if exists
-    if (hasStraggler) {
+    if (hasStraggler) 
         binaryInsert(mainChain, straggler, mainChain.size());
-    }
-    
     arr = mainChain;
 }
 
-// Ford-Johnson sort for deque
 void PmergeMe::fordJohnsonSort(std::deque<int>& arr) {
     if (arr.size() <= 1) return;
-    
-    // Step 1: Group into pairs and separate
+
     std::vector<std::pair<int, int> > pairs;
     bool hasStraggler = false;
     int straggler = 0;
@@ -267,26 +222,22 @@ void PmergeMe::fordJohnsonSort(std::deque<int>& arr) {
         }
         return;
     }
-    
-    // Step 2: Extract larger elements and sort them recursively
+
     std::deque<int> largerElements;
     for (size_t i = 0; i < pairs.size(); ++i) {
         largerElements.push_back(pairs[i].second);
     }
     
     fordJohnsonSort(largerElements);
-    
-    // Step 3: Create main chain starting with larger elements
+
     std::deque<int> mainChain = largerElements;
-    
-    // Step 4: Insert smaller elements using Jacobsthal sequence
+
     std::vector<int> pendingElements;
     for (size_t i = 0; i < pairs.size(); ++i) {
         pendingElements.push_back(pairs[i].first);
     }
     
     if (!pendingElements.empty()) {
-        // Insert first element at the beginning
         binaryInsert(mainChain, pendingElements[0], mainChain.size());
         
         if (pendingElements.size() > 1) {
@@ -302,7 +253,6 @@ void PmergeMe::fordJohnsonSort(std::deque<int>& arr) {
                 for (size_t j = end; j >= start && j >= 1; --j) {
                     size_t idx = j - 1;
                     if (idx < pendingElements.size() && !inserted[idx]) {
-                        // Find position limit (corresponding larger element)
                         size_t limit = mainChain.size();
                         for (size_t k = 0; k < mainChain.size(); ++k) {
                             if (mainChain[k] == pairs[idx].second) {
@@ -315,8 +265,7 @@ void PmergeMe::fordJohnsonSort(std::deque<int>& arr) {
                     }
                 }
             }
-            
-            // Insert any remaining elements
+
             for (size_t i = 1; i < pendingElements.size(); ++i) {
                 if (!inserted[i]) {
                     size_t limit = mainChain.size();
@@ -331,8 +280,7 @@ void PmergeMe::fordJohnsonSort(std::deque<int>& arr) {
             }
         }
     }
-    
-    // Step 5: Insert straggler if exists
+
     if (hasStraggler) {
         binaryInsert(mainChain, straggler, mainChain.size());
     }
@@ -350,13 +298,12 @@ void PmergeMe::run(int argc, char **argv) {
     
     printSequence(_vectorContainer, "Before:");
 
-    // Sort with vector
+
     double startTime = getTime();
     fordJohnsonSort(_vectorContainer);
     double endTime = getTime();
     double vectorTime = endTime - startTime;
 
-    // Sort with deque
     startTime = getTime();
     fordJohnsonSort(_dequeContainer);
     endTime = getTime();
