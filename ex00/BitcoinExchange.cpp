@@ -39,12 +39,9 @@ bool BitcoinExchange::loadDatabase(const std::string& filename)
 
     if (!std::getline(file, line)) 
         { std::cerr << "Error: invalid database format." << std::endl; file.close(); return false; }
-    
-    // Parse header line with same flexibility as data lines
     size_t commaPos = line.find(',');
     if (commaPos == std::string::npos) 
         { std::cerr << "Error: invalid database format." << std::endl; file.close(); return false; }
-    
     std::string headerDate = trim(line.substr(0, commaPos));
     std::string headerRate = trim(line.substr(commaPos + 1));
     
@@ -106,7 +103,6 @@ void BitcoinExchange::processInputFile(const std::string& filename) const
     if (!std::getline(file, line)) 
         { std::cerr << "Error: invalid input file format." << std::endl; file.close(); return; }
     
-    // Parse header line with same flexibility as data lines
     size_t pipePos = line.find('|');
     if (pipePos == std::string::npos) 
         { std::cerr << "Error: invalid input file format." << std::endl; file.close(); return; }
@@ -136,8 +132,6 @@ void BitcoinExchange::processInputFile(const std::string& filename) const
         if (value < 0) { std::cerr << "Error: not a positive number." << std::endl; continue; }
         if (value > 1000) { std::cerr << "Error: too large a number." << std::endl; continue; }
         double rate = getExchangeRate(date);
-        // if (rate == 0.0)
-        //     continue;
         if (hasOverflow(value, rate)) { std::cerr << "Error: calculation overflow." << std::endl; continue; }
         double result = value * rate;
         std::cout << date << " => " << value << " = " << result << std::endl;
@@ -248,7 +242,7 @@ bool BitcoinExchange::isValidValue(const std::string& value) const
     double val = strtod(trimmedValue.c_str(), &endPtr);
     (void)val;
     if (*endPtr != '\0')
-        return false;    
+        return false;
     return true;
 }
 
